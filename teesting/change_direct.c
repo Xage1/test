@@ -41,6 +41,7 @@ printf("%s\n", directory);
 
 if (chdir(directory) != 0)
 {
+perror("cd");
 fprintf(stderr, "cd: failed to change directory to %s\n", directory);
 return;
 

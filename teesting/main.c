@@ -16,10 +16,21 @@ char *args[MAX_ARGS];
 char *history[MAX_HISTORY];
 int historyCount = 0;
 char *line = NULL;
-int i = 0;
+int i, j, k;
+char *name;
+char *value;
+
+i = 0;
+j = 0;
+k = 0;
+name = NULL;
+value = NULL;
+
 
 while (1)
 {
+int aliasIndex = -1;
+
 printf(";‑) ");
 fflush(stdout);
 
@@ -48,14 +59,20 @@ if (strcmp(command, "cd") == 0)
 {
 if (args[1] != NULL)
 {
-change_directory(args[1]);
+if (chdir(args[1]) != 0)
+{
+fprintf(stderr, "cd: %s: No such file or directory\n", args[1]);
+}
 }
 else
 {
 const char *home = getenv("HOME");
 if (home != NULL)
 {
-change_directory(home);
+if (chdir(home) != 0)
+{
+fprintf(stderr, "cd: %s: No such file or directory\n", home);
+}
 }
 else
 {
@@ -67,19 +84,19 @@ fprintf(stderr, "cd: no $HOME environment variable set\n");
 if (strcmp(command, "alias") == 0)
 
 {
-if (args[1] == NULL)
+if (args[1][0] == '\0')
 {
 
-for (int i = 0; i < aliasCount; i++)
+for (j = 0; j < aliasCount; j++)
 {
-printAlias(&aliases[i]);
+printAlias(&aliases[j]);
 }
 
 }
 else
 {
 
-for (int i = 1; args[i] != NULL; i++)
+for (j = 1; args[j][0] != '\0'; j++)
 {
 
 char *equalSign = strchr(args[i], '=');
@@ -88,16 +105,15 @@ if (equalSign != NULL)
 
 {
 *equalSign = '\0';
-char *name = args[i];
-char *value = equalSign + 1;
+name = args[j];
+value = equalSign + 1;
 
-int aliasIndex = -1;
-for (int j = 0; j < aliasCount; j++)
+for (k = 0; k < aliasCount; k++)
 {
 
-if (strcmp(aliases[j].name, name) == 0)
+if (strcmp(aliases[k].name, name) == 0)
 {
-aliasIndex = j;
+aliasIndex = k;
 break;
 }
 
@@ -132,13 +148,13 @@ else
 
 {
 
-for (int j = 0; j < aliasCount; j++)
+for (k = 0; k < aliasCount; k++)
 
 {
 
-if (strcmp(aliases[j].name, args[i]) == 0)
+if (strcmp(aliases[k].name, args[j]) == 0)
 {
-printAlias(&aliases[j]);
+printAlias(&aliases[k]);
 break;
 }
 }
@@ -169,10 +185,32 @@ exitCommand(command);
 }
 else
 {
-executeCommand(command);
-}
-i = 0;
-}
+pid_t pid = fork();
 
+if (pid == -1)
+{
+
+perror("fork");
+exit(EXIT_FAILURE);
+
+}
+else if (pid == 0)
+
+{
+if (execvp(args[0], args) == -1)
+{
+perror("execvp");
+exit(EXIT_FAILURE);
+}
+else
+
+{
+int status;
+waitpid(pid, &status, 0);
+}
+}
+}
+free(line);
 return (0);
+}
 }
