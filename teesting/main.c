@@ -6,6 +6,7 @@
  */
 int main(void)
 {
+    char input[MAX_PATH_LENGTH];
     char command[MAX_COMMAND_LENGTH];
     char *args[MAX_ARGS];
     char *history[MAX_HISTORY];
@@ -37,10 +38,16 @@ int main(void)
 
         addHistory(history, &historyCount, command);
 
-        if (strcmp(command, "cd") == 0)
-        {
-            changeDirectory(args);
-        }
+	input[strcspn(input, "\n")] = '\0';
+
+if (strcmp(input, "exit") == 0)
+{
+
+break;
+}
+
+change_directory(input);
+
         else if (strcmp(command, "pwd") == 0)
         {
             printWorkingDirectory();
@@ -69,4 +76,3 @@ int main(void)
 
     return (0);
 }
-

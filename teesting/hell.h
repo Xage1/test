@@ -17,6 +17,7 @@
 #define MAX_ARGS 10
 #define MAX_HISTORY 10
 #define BUFFER_SIZE 1024
+#define MAX_PATH_LENGTH 1024
 
 extern char **environ;
 
@@ -25,7 +26,7 @@ char* custom_getline(void);
 int exitCommand(char *command);
 void executeCommand(char *command);
 void parseCommand(char *command, char **args);
-void changeDirectory(char **args);
+void change_directory(const char *directory);
 void printWorkingDirectory();
 void echoMessage(char **args);
 void displayHelp();
