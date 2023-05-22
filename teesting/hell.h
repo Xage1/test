@@ -18,6 +18,15 @@
 #define MAX_HISTORY 10
 #define BUFFER_SIZE 1024
 #define MAX_PATH_LENGTH 1024
+#define MAX_ALIAS_LENGTH 50
+#define MAX_VALUE_LENGTH 100
+#define MAX_ALIASES 50
+
+typedef struct {
+char name[MAX_ALIAS_LENGTH];
+char value[MAX_VALUE_LENGTH];
+} Alias;
+
 
 extern char **environ;
 
@@ -33,7 +42,7 @@ void displayHelp();
 void displayHistory(char **history, int count);
 void addHistory(char **history, int *count, char *command);
 void executeExternalCommand(char **args);
-
+void printAlias(const Alias *alias);
 
 
 #endif

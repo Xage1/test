@@ -4,8 +4,12 @@
  * main - start of main function
  * Return: 0 on success, any other value on error
  */
+
 int main(void)
 {
+
+Alias aliases[MAX_ALIASES];
+int aliasCount = 0;
 char input[MAX_PATH_LENGTH];
 char command[MAX_COMMAND_LENGTH];
 char *args[MAX_ARGS];
@@ -56,6 +60,89 @@ change_directory(home);
 else
 {
 fprintf(stderr, "cd: no $HOME environment variable set\n");
+}
+}
+}
+
+if (strcmp(command, "alias") == 0)
+
+{
+if (args[1] == NULL)
+{
+
+for (int i = 0; i < aliasCount; i++)
+{
+printAlias(&aliases[i]);
+}
+
+}
+else
+{
+
+for (int i = 1; args[i] != NULL; i++)
+{
+
+char *equalSign = strchr(args[i], '=');
+
+if (equalSign != NULL)
+
+{
+*equalSign = '\0';
+char *name = args[i];
+char *value = equalSign + 1;
+
+int aliasIndex = -1;
+for (int j = 0; j < aliasCount; j++)
+{
+
+if (strcmp(aliases[j].name, name) == 0)
+{
+aliasIndex = j;
+break;
+}
+
+}
+
+
+if (aliasIndex != -1)
+{
+
+strcpy(aliases[aliasIndex].value, value);
+}
+else if (aliasCount < MAX_ALIASES)
+
+{
+strcpy(aliases[aliasCount].name, name);
+strcpy(aliases[aliasCount].value, value);
+aliasCount++;
+
+}
+
+else
+
+{
+
+fprintf(stderr, "alias: maximum number of aliases reached\n");
+
+}
+
+}
+
+else
+
+{
+
+for (int j = 0; j < aliasCount; j++)
+
+{
+
+if (strcmp(aliases[j].name, args[i]) == 0)
+{
+printAlias(&aliases[j]);
+break;
+}
+}
+}
 }
 }
 }
