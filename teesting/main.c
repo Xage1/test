@@ -7,7 +7,6 @@
 
 int main(void)
 {
-
 Alias aliases[MAX_ALIASES];
 int aliasCount = 0;
 char input[MAX_PATH_LENGTH];
@@ -25,7 +24,6 @@ j = 0;
 k = 0;
 name = NULL;
 value = NULL;
-
 
 while (1)
 {
@@ -46,6 +44,7 @@ printf("You entered: %s\n", line);
 strcpy(command, line);
 
 args[i] = strtok(command, " ");
+
 while (args[i] != NULL)
 {
 args[++i] = strtok(NULL, " ");
@@ -63,6 +62,7 @@ if (chdir(args[1]) != 0)
 {
 fprintf(stderr, "cd: %s: No such file or directory\n", args[1]);
 }
+
 }
 else
 {
@@ -82,27 +82,22 @@ fprintf(stderr, "cd: no $HOME environment variable set\n");
 }
 
 if (strcmp(command, "alias") == 0)
-
 {
 if (args[1][0] == '\0')
 {
-
 for (j = 0; j < aliasCount; j++)
 {
 printAlias(&aliases[j]);
 }
-
 }
 else
-{
 
+{
 for (j = 1; args[j][0] != '\0'; j++)
 {
-
-char *equalSign = strchr(args[i], '=');
+char *equalSign = strchr(args[j], '=');
 
 if (equalSign != NULL)
-
 {
 *equalSign = '\0';
 name = args[j];
@@ -110,50 +105,39 @@ value = equalSign + 1;
 
 for (k = 0; k < aliasCount; k++)
 {
-
-if (strcmp(aliases[k].name, name) == 0)
+if (strcmp(aliases[k].name, args[j]) == 0)
 {
 aliasIndex = k;
 break;
 }
-
 }
-
 
 if (aliasIndex != -1)
 {
-
-strcpy(aliases[aliasIndex].value, value);
+free(aliases[aliasIndex].value);
+aliases[aliasIndex].value = strdup(value);
 }
+
 else if (aliasCount < MAX_ALIASES)
-
 {
-strcpy(aliases[aliasCount].name, name);
-strcpy(aliases[aliasCount].value, value);
+aliases[aliasCount].name = strdup(name);
+aliases[aliasCount].value = strdup(value);
 aliasCount++;
-
 }
 
 else
-
 {
 
 fprintf(stderr, "alias: maximum number of aliases reached\n");
-
 }
-
 }
-
 else
-
 {
-
 for (k = 0; k < aliasCount; k++)
-
 {
-
 if (strcmp(aliases[k].name, args[j]) == 0)
 {
+
 printAlias(&aliases[k]);
 break;
 }
@@ -166,6 +150,10 @@ break;
 else if (strcmp(command, "pwd") == 0)
 {
 printWorkingDirectory();
+}
+else if (strcmp(command, "clear") == 0)
+{
+system("clear");
 }
 else if (strcmp(command, "echo") == 0)
 {
@@ -189,28 +177,32 @@ pid_t pid = fork();
 
 if (pid == -1)
 {
-
 perror("fork");
 exit(EXIT_FAILURE);
-
 }
-else if (pid == 0)
 
+else if (pid == 0)
 {
 if (execvp(args[0], args) == -1)
 {
 perror("execvp");
 exit(EXIT_FAILURE);
 }
+}
 else
-
 {
 int status;
 waitpid(pid, &status, 0);
 }
 }
 }
+
+for (i = 0; i < aliasCount; i++)
+{
+free(aliases[i].name);
+free(aliases[i].value);
+}
+
 free(line);
 return (0);
-}
 }

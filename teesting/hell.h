@@ -23,8 +23,8 @@
 #define MAX_ALIASES 50
 
 typedef struct {
-char name[MAX_ALIAS_LENGTH];
-char value[MAX_VALUE_LENGTH];
+char *name;
+char *value;
 } Alias;
 
 
