@@ -196,7 +196,7 @@ waitpid(pid, &status, 0);
 }
 }
 }
-
+executeCommand(command);
 for (i = 0; i < aliasCount; i++)
 {
 free(aliases[i].name);
