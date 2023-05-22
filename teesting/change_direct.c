@@ -10,7 +10,8 @@
 void change_directory(const char *directory)
 {
 char path[MAX_PATH_LENGTH];
-
+int result;
+  
 if (directory == NULL || strcmp(directory, "") == 0)
 {
 
@@ -35,9 +36,11 @@ return;
 
 }
 directory = previous_dir;
+printf("%s\n", directory);
 }
 
-if (chdir(directory) != 0)
+result = chdir(directory);
+if (result != 0)
 {
 fprintf(stderr, "cd: %s: No such file or directory to\n", directory);
 return;
