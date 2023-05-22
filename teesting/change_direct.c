@@ -35,14 +35,11 @@ return;
 
 }
 directory = previous_dir;
-printf("%s\n", directory);
-
 }
 
 if (chdir(directory) != 0)
 {
-perror("cd");
-fprintf(stderr, "cd: failed to change directory to %s\n", directory);
+fprintf(stderr, "cd: %s: No such file or directory to\n", directory);
 return;
 
 }
